@@ -77,6 +77,7 @@
           }
         }
       };
+
       xmlhttp.open("GET", "http://research.geodan.nl/sites/topo3d/data/rws_pc_service.php?north=452635&south=452434&west=134917&east=135355&density=0.0001", true);
       xmlhttp.send();
 
@@ -148,7 +149,8 @@
             markerSymbol: '?'
           }));
         }
-      }
+      };
+
       geoJsonxmlhttp.open("GET", "https://raw.githubusercontent.com/reinvantveer/ld-transformer/master/data/source/vGalecopperbrug_puntverlichting.geojson", true);
       geoJsonxmlhttp.send();
     });

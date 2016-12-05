@@ -78,7 +78,7 @@
         }
       };
 
-      xmlhttp.open("GET", "http://research.geodan.nl/sites/topo3d/data/rws_pc_service.php?north=452635&south=452434&west=134917&east=135355&density=0.0001", true);
+      xmlhttp.open("GET", "https://research.geodan.nl/sites/topo3d/data/rws_pc_service.php?north=452635&south=452434&west=134917&east=135355&density=0.0001", true);
       xmlhttp.send();
 
       var xmlhttp2 = new XMLHttpRequest();
@@ -123,7 +123,7 @@
       };
       var x = 135207,
         y = 452536;
-      xmlhttp2.open("GET", "http://research.geodan.nl/sites/topo3d/data/rws_pc_service.php?north=" + (y + 5) + "&south=" + (y - 5) + "&west=" + (x - 5) + "&east=" + (x + 5) + "&density=1", true);
+      xmlhttp2.open("GET", "https://research.geodan.nl/sites/topo3d/data/rws_pc_service.php?north=" + (y + 5) + "&south=" + (y - 5) + "&west=" + (x - 5) + "&east=" + (x + 5) + "&density=1", true);
       xmlhttp2.send();
 
       var geoJsonxmlhttp = new XMLHttpRequest();

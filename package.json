@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/reinvantveer/rws-l3d#readme",
   "dependencies": {
-    "cesium": "^1.28.0"
+    "cesium": "^1.28.0",
+    "proj4": "^2.3.15"
   }
 }

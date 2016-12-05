@@ -1,0 +1,22 @@
+{
+  "name": "rws-l3d",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reinvantveer/rws-l3d.git"
+  },
+  "author": "Josja Heerema / Rein van t Veer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/reinvantveer/rws-l3d/issues"
+  },
+  "homepage": "https://github.com/reinvantveer/rws-l3d#readme",
+  "dependencies": {
+    "cesium": "^1.28.0"
+  }
+}

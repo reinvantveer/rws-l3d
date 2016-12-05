@@ -1,1 +1,166 @@
-Hello!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta name="description" content="Use Viewer to start building new applications or easily embed Cesium into existing applications.">
+    <meta name="cesium-sandcastle-labels" content="Beginner, Showcases">
+    <title>Cesium Demo</title>
+    <script type="text/javascript" src="./resources/Apps/Sandcastle/Sandcastle-header.js"></script>
+    <script type="text/javascript" src="./resources/ThirdParty/requirejs-2.1.20/require.js"></script>
+    <script type="text/javascript">
+      require.config({
+        baseUrl : './resources/Source',
+        waitSeconds : 60
+      });
+    </script>
+</head>
+
+<body class="sandcastle-loading" data-sandcastle-bucket="bucket-requirejs.html">
+<style>
+    @import url(../templates/bucket.css);
+</style>
+<div id="cesiumContainer" class="fullSize"></div>
+<div id="loadingOverlay"><h1>Loading...</h1></div>
+<div id="toolbar"></div>
+<script id="cesium_sandcastle_script">
+  function startup(Cesium) {
+    'use strict';
+//Sandcastle_Begin
+    var viewer = new Cesium.Viewer('cesiumContainer');
+
+    require(['proj4'], function (proj4) {
+      proj4.defs("EPSG:28992","+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +towgs84=565.417,50.3319,465.552,-0.398957,0.343988,-1.8774,4.0725 +units=m +no_defs");
+
+      var fromProjection = "EPSG:28992";
+      var toProjection = "EPSG:4326";
+      var data;
+
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+          data = xmlhttp.responseText;
+          // split off 'x;y;z;r;g;b'
+          var pointsWithoutIndex = data.split(' ')[1];
+          var points = pointsWithoutIndex.split('\n');
+          //points = points.pop(); // pop first = 'x;y;z;r;g;b'
+          points.shift();
+          points.splice(-1,1);
+          for(var i = 0; i < points.length; i++) {
+            var point = points[i];
+            var coords = point.split(';');
+
+            //x= 138385.884
+            var x = parseFloat(coords[0]);
+            // y = 452096.147
+            var y = parseFloat(coords[1]);
+            // z = 2.262
+            var z = parseFloat(coords[2]);
+            // r = 56
+            var r = coords[3];
+            // g = 58
+            var g = coords[4];
+            // b = 36
+            var b = coords[5];
+
+            var wgs84 = proj4(fromProjection, toProjection, [x, y]); // 6765252.551444409, 1366782.5924162213
+
+            viewer.entities.add({
+              position : Cesium.Cartesian3.fromDegrees(wgs84[0], wgs84[1], z),
+              point : {
+                color : Cesium.Color.fromBytes(r, g, b, 255),
+                pixelSize : 7
+              }
+            });
+            viewer.zoomTo(viewer.entities);
+          }
+        }
+      };
+      xmlhttp.open("GET", "http://research.geodan.nl/sites/topo3d/data/rws_pc_service.php?north=452635&south=452434&west=134917&east=135355&density=0.0001", true);
+      xmlhttp.send();
+
+      var xmlhttp2 = new XMLHttpRequest();
+      xmlhttp2.onreadystatechange = function() {
+        if (xmlhttp2.readyState == 4 && xmlhttp2.status == 200) {
+          data = xmlhttp2.responseText;
+          // split off 'x;y;z;r;g;b'
+          var pointsWithoutIndex = data.split(' ')[1];
+          var points = pointsWithoutIndex.split('\n');
+          //points = points.pop(); // pop first = 'x;y;z;r;g;b'
+          points.shift();
+          points.splice(-1,1);
+          for(var i = 0; i < points.length; i++) {
+            var point = points[i];
+            var coords = point.split(';');
+
+            //x= 138385.884
+            var x = parseFloat(coords[0]);
+            // y = 452096.147
+            var y = parseFloat(coords[1]);
+            // z = 2.262
+            var z = parseFloat(coords[2]);
+            // r = 56
+            var r = coords[3];
+            // g = 58
+            var g = coords[4];
+            // b = 36
+            var b = coords[5];
+
+            var wgs84 = proj4(fromProjection, toProjection, [x, y]); // 6765252.551444409, 1366782.5924162213
+
+            viewer.entities.add({
+              position : Cesium.Cartesian3.fromDegrees(wgs84[0], wgs84[1], z),
+              point : {
+                color : Cesium.Color.fromBytes(r, g, b, 255),
+                pixelSize : 7
+              }
+            });
+            viewer.zoomTo(viewer.entities);
+          }
+        }
+      };
+      var x = 135207,
+        y = 452536;
+      xmlhttp2.open("GET", "http://research.geodan.nl/sites/topo3d/data/rws_pc_service.php?north=" + (y + 5) + "&south=" + (y - 5) + "&west=" + (x - 5) + "&east=" + (x + 5) + "&density=1", true);
+      xmlhttp2.send();
+
+      var geoJsonxmlhttp = new XMLHttpRequest();
+      geoJsonxmlhttp.onreadystatechange = function() {
+        if (geoJsonxmlhttp.readyState == 4 && geoJsonxmlhttp.status == 200) {
+          var geoJson = JSON.parse(geoJsonxmlhttp.responseText);
+          console.log('geoJson:', geoJson);
+          var geoJsonWGS84 = geoJson;
+          delete geoJsonWGS84.crs;
+          geoJsonWGS84.features = geoJson.features
+            .map(function(feature) {
+              var newFeature = feature;
+              newFeature.geometry.coordinates = proj4(fromProjection,toProjection, feature.geometry.coordinates);
+              newFeature.geometry.coordinates[2] -= 40;
+              return newFeature;
+            });
+          console.log('verlichting:', geoJsonWGS84);
+
+          viewer.dataSources.add(Cesium.GeoJsonDataSource.load(geoJsonWGS84, {
+            stroke: Cesium.Color.HOTPINK,
+            fill: Cesium.Color.PINK,
+            strokeWidth: 3,
+            markerSymbol: '?'
+          }));
+        }
+      }
+      geoJsonxmlhttp.open("GET", "https://raw.githubusercontent.com/reinvantveer/ld-transformer/master/data/source/vGalecopperbrug_puntverlichting.geojson", true);
+      geoJsonxmlhttp.send();
+    });
+
+//Sandcastle_End
+    Sandcastle.finishedLoading();
+  }
+  if (typeof Cesium !== "undefined") {
+    startup(Cesium);
+  } else if (typeof require === "function") {
+    require(["Cesium"], startup);
+  }
+</script>
+</body>
+</html>
